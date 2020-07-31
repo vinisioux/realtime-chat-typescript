@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { Server } from 'http';
-import { Socket } from 'socket.io';
+import socketio, { Socket } from 'socket.io';
 
 import AppError from './errors/AppError';
 
@@ -11,18 +11,13 @@ import routes from './routes';
 
 const app = express();
 const server = new Server(app);
-const io = require('socket.io')(server);
-
-app.use(cors());
-app.use(express.json());
-app.use(routes);
+const io = socketio(server);
 
 const connectedUsers: any = {};
 
 io.on('connection', (socket: Socket) => {
   const { user_id } = socket.handshake.query;
   connectedUsers[user_id] = socket.id;
-  console.log('User connected: ', user_id);
 });
 
 app.use((request: Request, response: Response, next: NextFunction) => {
@@ -47,6 +42,10 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
     message: 'Internal server error',
   });
 });
+
+app.use(cors());
+app.use(express.json());
+app.use(routes);
 
 server.listen(3333, () => {
   console.log('Server started on port 3333');

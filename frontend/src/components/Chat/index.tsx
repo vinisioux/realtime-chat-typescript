@@ -81,10 +81,27 @@ const Chat: React.FC = () => {
   );
 
   useEffect(() => {
-    socket.on('message', (newMessage: string) => {
-      setMessages([...messages, newMessage] as Message[]);
-    });
-  }, [messages, socket]);
+    socket.on(
+      'message',
+      (newMessage: Omit<{ message: Message }, 'formattedDate'>) => {
+        setMessages([
+          ...messages,
+          {
+            _id: newMessage.message._id,
+            user: {
+              user_id: newMessage.message.user.user_id,
+              name: newMessage.message.user.name,
+              username: newMessage.message.user.username,
+            },
+            content: newMessage.message.content,
+            createdAt: newMessage.message.createdAt,
+            formattedDate: parseISO(newMessage.message.createdAt.toString()),
+          },
+        ] as Message[]);
+      }
+    );
+    scrollToBottom();
+  }, [messages, scrollToBottom, socket]);
 
   useEffect(() => {
     loadMessages().then(() => {

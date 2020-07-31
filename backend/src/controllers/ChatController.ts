@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import io from 'socket.io';
 
 import SendMessageChatService from '../services/SendMessageChatService';
 import ShowMessagesChatService from '../services/ShowMessagesChatService';
@@ -22,6 +23,7 @@ class ChatController {
       content,
     });
 
+    request.io.emit('message', message);
     return response.status(200).json(message);
   }
 }
