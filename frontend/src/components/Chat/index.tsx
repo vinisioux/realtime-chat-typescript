@@ -3,14 +3,13 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  useMemo,
   FormEvent,
 } from 'react';
 import { MdSend } from 'react-icons/md';
 import { parseISO } from 'date-fns';
-import socketio from 'socket.io-client';
 
 import api from '../../services/api';
+import Socket from '../../services/socket';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -72,13 +71,13 @@ const Chat: React.FC = () => {
     );
   }, []);
 
-  const socket = useMemo(
-    () =>
-      socketio('http://localhost:3333', {
-        query: { user_id: userAuth._id },
-      }),
-    [userAuth._id]
-  );
+  useEffect(() => {
+    loadMessages().then(() => {
+      scrollToBottom();
+    });
+  }, [loadMessages, scrollToBottom]);
+
+  const socket = Socket({ user_id: userAuth._id });
 
   useEffect(() => {
     socket.on(
@@ -102,12 +101,6 @@ const Chat: React.FC = () => {
     );
     scrollToBottom();
   }, [messages, scrollToBottom, socket]);
-
-  useEffect(() => {
-    loadMessages().then(() => {
-      scrollToBottom();
-    });
-  }, [loadMessages, scrollToBottom]);
 
   const handleSendNewMessage = useCallback(
     async (event: FormEvent) => {

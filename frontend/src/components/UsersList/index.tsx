@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 import api from '../../services/api';
+import Socket from '../../services/socket';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -18,18 +19,16 @@ const UsersList: React.FC = () => {
 
   const { user: userAuth } = useAuth();
 
+  const socket = Socket({ user_id: userAuth._id });
+
   const loadUsers = useCallback(() => {
     api.get('users').then((response) => {
       setUsers(response.data);
     });
   }, []);
 
-  useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
-
   const handleChangeStatus = useCallback(
-    async (newStatus: string) => {
+    async (newStatus: 'online' | 'offline') => {
       await api.put('status', {
         newStatus,
       });
@@ -38,6 +37,21 @@ const UsersList: React.FC = () => {
     },
     [loadUsers]
   );
+
+  useEffect(() => {
+    // IIFE --> Immediately Invoked Function Expression
+    (async () => {
+      const response = await api.get('users');
+
+      setUsers(response.data);
+    })();
+  }, []);
+
+  useEffect(() => {
+    socket.on('changeUserStatus', () => {
+      loadUsers();
+    });
+  }, [loadUsers, socket]);
 
   return (
     <Container>

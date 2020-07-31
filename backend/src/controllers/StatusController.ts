@@ -20,6 +20,8 @@ class StatusController {
       { status: newStatus }
     );
 
+    request.io.emit('changeUserStatus');
+
     return response
       .status(200)
       .json({ success: `status changed to: ${newStatus}` });
