@@ -62,7 +62,7 @@ export const Message = styled.div`
 `;
 
 export const MessageAuthor = styled.span<MessageAuthorProps>`
-  font-weight: 600;
+  font-weight: 500;
   color: #fff;
 
   ${(props) =>
@@ -74,7 +74,7 @@ export const MessageAuthor = styled.span<MessageAuthorProps>`
 
 export const MessageContent = styled.span`
   margin-top: 10px;
-  color: #ccc;
+  color: #ececec;
 `;
 
 export const InputContainer = styled.form`
