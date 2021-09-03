@@ -12,7 +12,7 @@
     "@types/react-dom": "^16.9.0",
     "axios": "^0.21.1",
     "date-fns": "^2.15.0",
-    "immer": "^8.0.1",
+    "immer": "^9.0.6",
     "polished": "^3.6.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
